@@ -1,0 +1,42 @@
+{
+  "author": "Francois Leurent <131.js@cloudyks.org>",
+  "license": "MIT",
+  "scripts": {
+    "preversion": "npm run checkall",
+    "eslint": "eslint .",
+    "checkall": "npm run eslint",
+    "mocha": "node node_modules/mocha/bin/_mocha -b",
+    "cover": "nyc --temp-directory coverage/.nyc_output --reporter text-summary --reporter html --reporter lcov  mocha",
+    "coveralls": "npm install coveralls && node ./node_modules/coveralls/bin/coveralls.js < ./coverage/lcov.info"
+  },
+  "devDependencies": {
+    "eslint-plugin-ivs": "^1.3.0",
+    "expect.js": "^0.3.1",
+    "mocha": "^3.1.2",
+    "nyc": "^13.0.1"
+  },
+  "name": "networkdrivemgr",
+  "version": "1.0.0",
+  "description": "Network drive manager",
+  "main": "index.js",
+  "dependencies": {
+    "nyks": "^6.1.2",
+    "on-change-network": "^0.0.2",
+    "trayicon": "^1.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/131/networkdrivemgr.git"
+  },
+  "keywords": [
+    "FUSE",
+    "network",
+    "drive",
+    "sshfs",
+    "tray"
+  ],
+  "bugs": {
+    "url": "https://github.com/131/networkdrivemgr/issues"
+  },
+  "homepage": "https://github.com/131/networkdrivemgr#readme"
+}
