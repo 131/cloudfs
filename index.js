@@ -20,16 +20,13 @@ class DriveCtl extends EventEmitter {
     super();
 
     this.drives = [];
-
-    ocn(() => {
-      this.emit('ocn');
-    });
-
+    ocn(() => this.emit('ocn'));
   }
-  async register(drive) {
-    this.on('ocn', drive.emit.bind(this, 'ocn'));
 
-    drive.on('notify', this.notify.bind(this, drive.name));
+  register(drive) {
+    this.on('ocn', () => drive.emit("ocn"));
+
+    drive.on('notify', this.notify.bind(this, drive.config.name));
     drive.on('status_update', this.updateMenu.bind(this));
     drive.on('config_update', this.saveSettings.bind(this));
 
@@ -55,7 +52,7 @@ class DriveCtl extends EventEmitter {
     for(let drive of this.drives)
       settings.push(drive.config);
 
-    writeSync(SETTINGS_PATH, JSON.stringify(settings));
+    writeSync(SETTINGS_PATH, JSON.stringify(settings, null, 2));
   }
 
   async registerService(){
@@ -81,6 +78,8 @@ class DriveCtl extends EventEmitter {
 
       this.register(drive)
     }
+
+    this.updateMenu();
 
   }
 

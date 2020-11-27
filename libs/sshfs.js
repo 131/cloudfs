@@ -3,6 +3,7 @@
 const path  = require('path');
 const {spawn} = require('child_process');
 
+const wait = require('nyks/child_process/wait');
 const drain = require('nyks/stream/drain');
 const Drive = require('./drive');
 
@@ -13,7 +14,6 @@ const WINFSP_DIR     = 'C:\\Program Files (x86)\\WinFsp\\bin';
 
 
 class SshFS extends Drive {
-
   constructor(config) {
     super(config);
   }
@@ -21,26 +21,31 @@ class SshFS extends Drive {
   static async resolveOwner(username) {
 
     const FSPTOOL = path.join(WINFSP_DIR, 'fsptool-x64.exe');
-    let child = spawn(FSPTOOL, [username]);
-    let body = await drain(child);
+    let child = spawn(FSPTOOL, ["id", username]);
 
-    return body;
+    let [, body] = await Promise.all([wait(child), drain(child.stdout)]);
+
+    let uidMatch = /\(uid=([0-9]+)\)/;
+    if(uidMatch.test(body.toString()))
+      return uidMatch.exec(body.toString())[1];
+    throw `Cannot lookup user ${username} id`;
   }
 
   async _forgeCmdLine() {
 
+    let {remote, owner} = this.config;
     var args = [];
 
     let uid = -1;
     let gid = -1;
 
-    if(this.options.owner)
-      uid = await SshFS.resolveOwner(this.options.owner);
+    if(owner)
+      uid = await SshFS.resolveOwner(owner);
 
     args.push(
-      `${this.remote.user}@${this.remote.host}:${this.remote.path || ''}`,
+      `${remote.user}@${remote.host}:${remote.path || ''}`,
       `W:`,
-      `-p${this.remote.port || 22}`,
+      `-p${remote.port || 22}`,
       `-ovolname=webtest-ivs`,
       `-oStrictHostKeyChecking=no`,
       `-oUserKnownHostsFile=/dev/null`,
@@ -62,19 +67,21 @@ class SshFS extends Drive {
       `-odebug`,
 
       `-oPreferredAuthentications=publickey`,
-      `-oIdentityFile=${this.remote.keyfile}`,
+      `-oIdentityFile=${remote.keyfile}`,
     );
 
     return args;
   }
 
   async spawn() {
-
     if(!this._cmdLine)
       this._cmdLine = await this._forgeCmdLine();
 
-    var child = spawn(SSH_FS_PATH, { env : { PATH : SSH_FS_WIN_DIR}}, this._cmdLine);
 
+    var child = spawn(SSH_FS_PATH, this._cmdLine, {env : {PATH:SSH_FS_WIN_DIR}});
+
+    child.stderr.pipe(process.stderr);
+    child.stdout.pipe(process.stderr);
     return child;
   }
 
