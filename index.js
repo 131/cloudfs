@@ -11,7 +11,7 @@ const writeSync = require('nyks/fs/writeLazySafeSync');
 
 const SshFS = require('./libs/sshfs');
 
-const SETTINGS_PATH = path.join(process.env.USERPROFILE, '.config', 'drives/drives.json');
+const SETTINGS_PATH = path.join(process.env.ProgramData, 'drives/drives.json');
 
 class DriveCtl extends EventEmitter {
 
@@ -36,6 +36,9 @@ class DriveCtl extends EventEmitter {
   }
 
   updateMenu() {
+    if(!this.tray)
+      return;
+
     let menu = [];
     for(let drive of this.drives)
       menu.push(drive.menu(this.tray));
@@ -44,6 +47,8 @@ class DriveCtl extends EventEmitter {
   }
 
   notify(title, msg) {
+    if(!this.tray)
+      return;
     this.tray.notify(title, msg);
   }
 
@@ -55,20 +60,23 @@ class DriveCtl extends EventEmitter {
     writeSync(SETTINGS_PATH, JSON.stringify(settings, null, 2));
   }
 
-  async registerService(){
+  async registerService() {
     //sc create mount_drives binPath= %cd%\drive.exe start= auto
     //sc failure mount_drives reset= 30 actions= restart/1000
   }
 
   async run() {
-    this.tray = await Tray.create({
-      title : "foo de bar",
-    });
 
     var drives = [];
     try {
       drives = JSON.parse(fs.readFileSync(SETTINGS_PATH));
-    } catch(err) {console.error(err);};
+    } catch(err) {console.error(err);}
+
+
+    this.tray = await Tray.create({
+      title : `Drives (${drives.length})`,
+    });
+
 
 
     for(let config of drives) {
@@ -76,7 +84,7 @@ class DriveCtl extends EventEmitter {
       if(config.driver == "sshfs")
         drive = new SshFS(config);
 
-      this.register(drive)
+      this.register(drive);
     }
 
     this.updateMenu();

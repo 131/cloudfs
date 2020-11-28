@@ -1,11 +1,11 @@
 "use strict";
 
+const fs     = require('fs');
 const EventEmitter = require('events');
 
 const defer  = require('nyks/promise/defer');
 const wait   = require('nyks/child_process/wait');
 const sleep  = require('nyks/async/sleep');
-
 
 class Drive extends EventEmitter {
 

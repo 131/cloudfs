@@ -78,7 +78,7 @@ class SshFS extends Drive {
       this._cmdLine = await this._forgeCmdLine();
 
 
-    var child = spawn(SSH_FS_PATH, this._cmdLine, {env : {PATH:SSH_FS_WIN_DIR}});
+    var child = spawn(SSH_FS_PATH, this._cmdLine, {env : {PATH : SSH_FS_WIN_DIR}});
 
     child.stderr.pipe(process.stderr);
     child.stdout.pipe(process.stderr);
