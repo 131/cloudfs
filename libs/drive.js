@@ -7,12 +7,23 @@ const defer  = require('nyks/promise/defer');
 const wait   = require('nyks/child_process/wait');
 const sleep  = require('nyks/async/sleep');
 
+
+const consts = {
+  STATUS_UNKNOWN  : "(unknown)",
+  STATUS_MOUNTING : "mounting",
+  STATUS_MOUNTED  : "currently mounted",
+  STATUS_REMOUNTING : "Waiting for remount",
+
+  STATUS_UNMOUNTED  : "currently unmounted",
+  STATUS_UNMOUNTING : "(waiting for unmount)",
+};
+
 class Drive extends EventEmitter {
 
   constructor(config) {
     super();
     this.config = config;
-    this._statusMsg = "(unknown)";
+    this._statusMsg = consts.STATUS_UNKNOWN;
   }
 
 
@@ -45,7 +56,7 @@ class Drive extends EventEmitter {
     });
 
     do {
-      this.setStatus("mounting");
+      this.setStatus(consts.STATUS_MOUNTING);
 
       try {
         this.child = await this.spawn();
@@ -57,7 +68,7 @@ class Drive extends EventEmitter {
               return;
             await sleep(200);
           } while(true);
-          this.setStatus("currently mounted");
+          this.setStatus(consts.STATUS_MOUNTED);
           this.emit("notify", "Mounted");
         })(this.child);
 
@@ -69,7 +80,7 @@ class Drive extends EventEmitter {
       if(!this.mounted)
         break;
 
-      this.setStatus("Waiting for remount");
+      this.setStatus(consts.STATUS_REMOUNTING);
       console.log("Sleeping", delay);
       await Promise.race([sleep(delay), ocn_trigger]);
       delay *= 2;
@@ -91,12 +102,12 @@ class Drive extends EventEmitter {
 
     this.child.on('close', () => {
       this.child = null;
-      this.setStatus("currently unmounted");
+      this.setStatus(consts.STATUS_UNMOUNTED);
 
       this.emit("notify", "Unmounted");
     });
 
-    this.setStatus("(waiting for unmount)");
+    this.setStatus(consts.STATUS_UNMOUNTING);
     this.child.kill();
   }
 
@@ -116,6 +127,15 @@ class Drive extends EventEmitter {
     return i;
   }
 
+  static factory(config) {
+    let SshFS = require('./sshfs');
+
+    if(config.driver == "sshfs")
+      return new SshFS(config);
+
+  }
+
 }
 
+Drive.consts = consts;
 module.exports = Drive;

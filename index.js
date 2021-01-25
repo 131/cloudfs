@@ -9,9 +9,11 @@ const ocn  = require('on-change-network');
 
 const writeSync = require('nyks/fs/writeLazySafeSync');
 
-const SshFS = require('./libs/sshfs');
+const Drive = require('./libs/drive');
 
 const SETTINGS_PATH = path.join(process.env.ProgramData, 'drives/drives.json');
+const ICON_DEFAULT  = fs.readFileSync(path.join(__dirname, 'rsrcs/harddisk_network_information.png'));
+const ICON_ALL      = fs.readFileSync(path.join(__dirname, 'rsrcs/harddisk_network.png'));
 
 class DriveCtl extends EventEmitter {
 
@@ -40,8 +42,14 @@ class DriveCtl extends EventEmitter {
       return;
 
     let menu = [];
-    for(let drive of this.drives)
+    let allMounted = true;
+
+    for(let drive of this.drives) {
+      allMounted &= (drive._statusMsg == Drive.consts.STATUS_MOUNTED);
       menu.push(drive.menu(this.tray));
+    }
+    let icon = allMounted ? ICON_ALL : ICON_DEFAULT;
+    this.tray.setIcon(icon);
 
     this.tray.setMenu(...menu);
   }
@@ -75,15 +83,12 @@ class DriveCtl extends EventEmitter {
 
     this.tray = await Tray.create({
       title : `Drives (${drives.length})`,
+      icon  : ICON_DEFAULT,
     });
 
 
-
     for(let config of drives) {
-      let drive;
-      if(config.driver == "sshfs")
-        drive = new SshFS(config);
-
+      let drive = Drive.factory(config);
       this.register(drive);
     }
 

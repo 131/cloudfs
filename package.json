@@ -1,5 +1,5 @@
 {
-  "author": "Francois Leurent <131.js@cloudyks.org>",
+  "author": "Francois Leurent <131.code@leurent.email>",
   "license": "MIT",
   "scripts": {
     "preversion": "npm run checkall",
