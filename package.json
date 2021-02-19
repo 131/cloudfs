@@ -17,7 +17,7 @@
     "nyc": "^13.0.1"
   },
   "name": "winfsp-tray",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Network drive manager, a tray app for winfsp",
   "main": "index.js",
   "dependencies": {
