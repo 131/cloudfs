@@ -72,7 +72,7 @@ if [[ ! -z "$dobuild" ]] ; then
   rm -rf $SOURCE_DIR
   mkdir -p $SOURCE_DIR
 
-  cp -r package.json index.js libs drive.exe drive.config README.md $(which node.exe) $SOURCE_DIR/
+  cp -r .npmrc package.json index.js rsrcs libs drive.exe drive.config README.md $(which node.exe) $SOURCE_DIR/
 
   cd $SOURCE_DIR
   npm install --production --legacy-bundling
