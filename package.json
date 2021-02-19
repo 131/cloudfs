@@ -1,7 +1,7 @@
 {
   "author": "Francois Leurent <131.code@leurent.email>",
   "license": "MIT",
-  "private" : true,
+  "private": true,
   "scripts": {
     "preversion": "npm run checkall",
     "eslint": "eslint .",
@@ -17,7 +17,7 @@
     "nyc": "^13.0.1"
   },
   "name": "winfsp-tray",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "Network drive manager, a tray app for winfsp",
   "main": "index.js",
   "dependencies": {

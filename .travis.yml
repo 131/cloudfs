@@ -2,11 +2,10 @@ matrix:
   include:
   - os: windows
     language: node_js
-    env:
-      - OUTPUT_PATH=Winfsp-Tray_$TRAVIS_TAG.msi
     node_js:
     - 8
     before_install:
+    - echo $OUTPUT_PATH $TRAVIS_TAG
     - powershell Install-WindowsFeature Net-Framework-Core
     - choco install wixtoolset
     - export PATH=$PATH:";C:\Program Files (x86)\WiX Toolset v3.11\bin"
@@ -17,8 +16,8 @@ matrix:
       provider: releases
       api_key:
          secure: $GITHUB_TOKEN
-      file:
-         - $OUTPUT_PATH
+      file_glob: true
+      file: *.msi
       skip_cleanup: true
       on:
          tags: true

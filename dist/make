@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -xe
+set -eu
 
 # read secrets from env file, if available
 
