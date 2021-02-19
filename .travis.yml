@@ -14,8 +14,7 @@ matrix:
     script: skip     #skip tests 
     deploy:
       provider: releases
-      api_key:
-         secure: $GITHUB_TOKEN
+      token: "$GITHUB_TOKEN"
       file_glob: true
       file: ./*.msi
       skip_cleanup: true
