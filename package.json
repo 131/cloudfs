@@ -1,6 +1,7 @@
 {
   "author": "Francois Leurent <131.code@leurent.email>",
   "license": "MIT",
+  "private" : true,
   "scripts": {
     "preversion": "npm run checkall",
     "eslint": "eslint .",
@@ -15,18 +16,19 @@
     "mocha": "^3.1.2",
     "nyc": "^13.0.1"
   },
-  "name": "networkdrivemgr",
+  "name": "winfsp-tray",
   "version": "1.0.0",
-  "description": "Network drive manager",
+  "description": "Network drive manager, a tray app for winfsp",
   "main": "index.js",
   "dependencies": {
+    "cnyks": "^2.6.4",
     "nyks": "^6.1.3",
     "on-change-network": "^0.0.2",
-    "trayicon": "^1.1.0"
+    "trayicon": "^1.2.0"
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/131/networkdrivemgr.git"
+    "url": "git+ssh://git@github.com:131/winfsp-tray.git"
   },
   "keywords": [
     "FUSE",
@@ -36,7 +38,7 @@
     "tray"
   ],
   "bugs": {
-    "url": "https://github.com/131/networkdrivemgr/issues"
+    "url": "https://github.com/131/winfsp-tray/issues"
   },
-  "homepage": "https://github.com/131/networkdrivemgr#readme"
+  "homepage": "https://github.com/131/winfsp-tray#readme"
 }

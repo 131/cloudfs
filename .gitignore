@@ -2,3 +2,7 @@
 /node_modules
 /coverage
 /disc
+/release
+*.msi
+*.wixobj
+dist/directory.wxs

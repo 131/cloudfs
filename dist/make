@@ -1,0 +1,99 @@
+#!/usr/bin/env bash
+
+set -xe
+
+# read secrets from env file, if available
+
+if [[ -f .env ]] ; then
+  export $(cat .env | xargs)
+fi
+
+if which wslpath; then
+  PATH=$PATH:$(wslpath 'C:\Program Files (x86)\WiX Toolset v3.11\bin')
+fi
+
+here=$(dirname "$0")
+
+SOURCE_DIR=release
+export PACKAGE_VERSION=$(node -p "require('./package.json').version")
+export PACKAGE_NAME=Winfsp-Tray
+export OUTPUT_PATH=${PACKAGE_NAME}_v${PACKAGE_VERSION}.msi
+export PACKAGE_GUID=f1752246-7253-11eb-9459-3448ed2469f1
+export SHORTCUT_GUID=$(python  -c 'import uuid; print uuid.uuid1()')
+export WSLENV=PACKAGE_VERSION:PACKAGE_GUID:PACKAGE_NAME:SHORTCUT_GUID
+
+
+
+dobuild=
+dosign=
+dotest=
+
+while test $# -gt 0
+do
+  case "$1" in
+    --build) dobuild=true
+        ;;
+    --sign) dosign=true
+        ;;
+    --test) dotest=true
+        ;;
+    --*) echo "bad option $1"
+        ;;
+    *) echo "argument $1"
+        ;;
+  esac
+  shift
+done
+
+
+sign() {
+  FILE_IN="$1"
+  FILE_OUT="$FILE_IN.signed"
+
+  echo "Signing $FILE_IN"
+
+  args=(-s -X PUT --data-binary @-)
+  args=("${args[@]}"  -D -)
+  args=("${args[@]}" -o $FILE_OUT)
+
+  response=$(cat $FILE_IN | curl "${args[@]}" $SIGNING_SERVER | sed 's/\r$//' )
+
+  if echo "$response" | grep -qe "HTTP/1.. 200 " ; then
+    mv $FILE_OUT $FILE_IN
+    echo "$FILE_IN successfully signed."
+  else
+    echo  "Could not sign $FILE_IN"
+    exit 1
+  fi
+}
+
+
+if [[ ! -z "$dobuild" ]] ; then
+  rm -rf $SOURCE_DIR
+  mkdir -p $SOURCE_DIR
+
+  cp -r package.json index.js libs drive.exe drive.config README.md $(which node.exe) $SOURCE_DIR/
+
+  cd $SOURCE_DIR
+  npm install --production --legacy-bundling
+  #heat/light cannot harvest .bin directories
+  find -name .bin -type d |xargs rm -rf
+  cd ..
+
+  heat.exe dir $SOURCE_DIR -nologo -srd  -gg -sfrag -template fragment -dr APPDIR  -cg ALLFILES  -out $here/directory.wxs
+  candle.exe -nologo  -ext WixUtilExtension  -out $here/ $here/directory.wxs $here/app.wxs
+  light.exe -nologo -sice:ICE91 -sice:ICE64 -sice:ICE38 -sice:ICE18 -sice:ICE43 -sice:ICE57 -spdb -ext WixUtilExtension  -b $SOURCE_DIR $here/directory.wixobj $here/app.wixobj -o $OUTPUT_PATH
+fi
+
+
+if [[ ! -z "$dosign" ]] ; then
+  if [[ -z "$SIGNING_SERVER" ]] ; then
+    echo "No signing server defined";
+    exit 1
+  fi
+
+  echo "Signing binaries"
+
+  sign $OUTPUT_PATH
+fi
+

@@ -15,12 +15,15 @@ const SETTINGS_PATH = path.join(process.env.ProgramData, 'drives/drives.json');
 const ICON_DEFAULT  = fs.readFileSync(path.join(__dirname, 'rsrcs/harddisk_network_information.png'));
 const ICON_ALL      = fs.readFileSync(path.join(__dirname, 'rsrcs/harddisk_network.png'));
 
+
+const isNtAuth = process.env.USERNAME == `${process.env.COMPUTERNAME}$`;
+
 class DriveCtl extends EventEmitter {
 
 
   constructor() {
     super();
-
+    console.log("INHERE");
     this.drives = [];
     ocn(() => this.emit('ocn'));
   }
@@ -51,7 +54,18 @@ class DriveCtl extends EventEmitter {
     let icon = allMounted ? ICON_ALL : ICON_DEFAULT;
     this.tray.setIcon(icon);
 
+    if(!isNtAuth)
+      menu.push(this.tray.item("Quit", this.quit.bind(this)));
+
     this.tray.setMenu(...menu);
+  }
+
+  quit() {
+
+    for(let drive of this.drives)
+      drive.unmount();
+
+    this.tray.kill();
   }
 
   notify(title, msg) {
@@ -68,10 +82,6 @@ class DriveCtl extends EventEmitter {
     writeSync(SETTINGS_PATH, JSON.stringify(settings, null, 2));
   }
 
-  async registerService() {
-    //sc create mount_drives binPath= %cd%\drive.exe start= auto
-    //sc failure mount_drives reset= 30 actions= restart/1000
-  }
 
   async run() {
 
