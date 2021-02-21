@@ -15,6 +15,8 @@ const SETTINGS_PATH = path.join(process.env.ProgramData, 'drives/drives.json');
 const ICON_DEFAULT  = fs.readFileSync(path.join(__dirname, 'rsrcs/harddisk_network_information.png'));
 const ICON_ALL      = fs.readFileSync(path.join(__dirname, 'rsrcs/harddisk_network.png'));
 
+const {spawn} = require('child_process');
+
 
 const isNtAuth = process.env.USERNAME == `${process.env.COMPUTERNAME}$`;
 
@@ -56,6 +58,10 @@ class DriveCtl extends EventEmitter {
 
     if(!isNtAuth)
       menu.push(this.tray.item("Quit", this.quit.bind(this)));
+
+    menu.push(this.tray.item("Open configuration file", function() {
+      spawn("notepad.exe", [SETTINGS_PATH]);
+    }));
 
     this.tray.setMenu(...menu);
   }
