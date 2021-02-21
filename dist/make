@@ -8,8 +8,11 @@ if [[ -f .env ]] ; then
   export $(cat .env | xargs)
 fi
 
+
 if which wslpath; then
   PATH=$PATH:$(wslpath 'C:\Program Files (x86)\WiX Toolset v3.11\bin')
+elif which cygpath; then
+  PATH=$PATH:$(cygpath 'C:\Program Files (x86)\WiX Toolset v3.11\bin')
 fi
 
 here=$(dirname "$0")
@@ -19,7 +22,7 @@ export PACKAGE_VERSION=$(node -p "require('./package.json').version")
 export PACKAGE_NAME=Winfsp-Tray
 export OUTPUT_PATH=${PACKAGE_NAME}_v${PACKAGE_VERSION}.msi
 export PACKAGE_GUID=f1752246-7253-11eb-9459-3448ed2469f1
-export SHORTCUT_GUID=$(python  -c 'import uuid; print uuid.uuid1()')
+export SHORTCUT_GUID=$(node -p "require('nyks/node_modules/mout/random/guid')()")
 export WSLENV=PACKAGE_VERSION:PACKAGE_GUID:PACKAGE_NAME:SHORTCUT_GUID
 
 
