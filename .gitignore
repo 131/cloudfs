@@ -6,3 +6,4 @@
 *.msi
 *.wixobj
 dist/directory.wxs
+dist/.env
