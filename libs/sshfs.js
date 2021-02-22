@@ -32,7 +32,7 @@ class SshFS extends Drive {
   }
 
   async _forgeCmdLine() {
-    let {remote, owner} = this.config;
+    let {name, mount, remote, owner} = this.config;
     var args = [];
 
     let uid = -1;
@@ -43,9 +43,9 @@ class SshFS extends Drive {
 
     args.push(
       `${remote.user}@${remote.host}:${remote.path || ''}`,
-      remote.mount,
+      mount,
       `-p${remote.port || 22}`,
-      `-ovolname=${remote.name || 'remote'}`,
+      `-ovolname=${name || 'remote'}`,
       `-oStrictHostKeyChecking=no`,
       `-oUserKnownHostsFile=/dev/null`,
       `-oidmap=user`,
