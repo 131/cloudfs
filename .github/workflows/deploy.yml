@@ -22,6 +22,8 @@ jobs:
     - run: powershell Install-WindowsFeature Net-Framework-Core
     - run: npm install
     - run: ./dist/make --build --sign
+      env:
+        SIGNING_SERVER: ${{ secrets.SIGNING_SERVER }}
     - name: Upload binaries to release
       uses: svenstaro/upload-release-action@v2
       with:
