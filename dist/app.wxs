@@ -29,7 +29,13 @@
             Name="Winfsp-Tray" 
             Directory="DesktopFolder" 
             Target="[APPDIR]drive.exe"
-            WorkingDirectory="APPDIR"/>
+            WorkingDirectory="APPDIR"
+            Icon="harddisk_network.ico"
+            IconIndex="0"
+          >
+           <Icon Id="harddisk_network.ico" SourceFile="rsrcs\harddisk_network.ico" />
+        </Shortcut>
+    
       </Component>
     </Directory>
 
