@@ -18,8 +18,6 @@ const ICON_ALL      = fs.readFileSync(path.join(__dirname, 'rsrcs/harddisk_netwo
 const {spawn} = require('child_process');
 
 
-const isNtAuth = process.env.USERNAME == `${process.env.COMPUTERNAME}$`;
-
 class DriveCtl extends EventEmitter {
 
 
@@ -55,8 +53,7 @@ class DriveCtl extends EventEmitter {
     }
     let icon = allMounted ? ICON_ALL : ICON_DEFAULT;
     this.tray.setIcon(icon);
-
-    if(!isNtAuth)
+    if(!('DISPATCHED_SERVICE_MODE' in process.env))
       menu.push(this.tray.item("Quit", this.quit.bind(this)));
 
     menu.push(this.tray.item("Open configuration file", function() {
