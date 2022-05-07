@@ -8,7 +8,7 @@
    <Product Id="*" UpgradeCode="$(env.PACKAGE_GUID)" 
     Name="$(env.PACKAGE_NAME)" Version="$(env.PACKAGE_VERSION)" Manufacturer="Francois Leurent" Language="1033">
 
-    <Package InstallerVersion="200" Compressed="yes" Comments="Windows Installer Package" InstallScope="perUser"/>
+    <Package InstallerVersion="200" Compressed="yes" Comments="Windows Installer Package" InstallScope="perUser"  InstallPrivileges="limited" />
     <Media Id="1" Cabinet="product.cab" EmbedCab="yes"/>
 
   <Upgrade Id="$(env.PACKAGE_GUID)">
@@ -26,9 +26,9 @@
     <Directory Id="MergeRedirectFolder">
       <Component Id="MyExeComponent" Guid="$(env.SHORTCUT_GUID)">
         <Shortcut Id="MyDesktopShortcut" 
-            Name="Winfsp-Tray" 
+            Name="Cloudfs" 
             Directory="DesktopFolder" 
-            Target="[APPDIR]drive.exe"
+            Target="[APPDIR]cloudfs.exe"
             WorkingDirectory="APPDIR"
             Icon="harddisk_network.ico"
             IconIndex="0"
@@ -40,7 +40,7 @@
     </Directory>
 
     <Directory Id="LocalAppDataFolder">
-        <Directory Id="APPDIR" Name="Winfsp-Tray"/>
+        <Directory Id="APPDIR" Name="Cloudfs"/>
     </Directory>
   </Directory>
 

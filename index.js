@@ -11,7 +11,7 @@ const writeSync = require('nyks/fs/writeLazySafeSync');
 
 const Drive = require('./libs/drive');
 
-const SETTINGS_PATH = path.join(process.env.ProgramData, 'drives/drives.json');
+const SETTINGS_PATH = path.join(process.env.ProgramData, 'cloudfs/config.json');
 const ICON_DEFAULT  = fs.readFileSync(path.join(__dirname, 'rsrcs/harddisk_network_information.png'));
 const ICON_ALL      = fs.readFileSync(path.join(__dirname, 'rsrcs/harddisk_network.png'));
 

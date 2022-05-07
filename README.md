@@ -1,32 +1,45 @@
-[![Build Status](https://github.com/131/winfsp-tray/actions/workflows/deploy.yml/badge.svg?branch=master)](https://github.com/131/winfsp-tray/actions/workflows/deploy.yml)
-[![Version](https://img.shields.io/github/v/release/131/winfsp-tray)](https://github.com/131/winfsp-tray/releases)
+[![Build Status](https://github.com/131/cloudfs/actions/workflows/deploy.yml/badge.svg?branch=master)](https://github.com/131/cloudfs/actions/workflows/deploy.yml)
+[![Version](https://img.shields.io/github/v/release/131/cloudfs)](https://github.com/131/cloudfs/releases)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](http://opensource.org/licenses/MIT)
 ![Available platform](https://img.shields.io/badge/platform-win32-blue.svg)
 
 
+# Motivation
+Unlimited drive.
+
+Cloudfs is a standalone, lightweight, windows desktop application. It will register itself in system tray and run as background app.
+Not an electron/nwjs weirdness as there is no GUI involded / required. Tray is handled by a [131/trayicon](https://github.com/131/trayicon), a **node module**.
+
+cloudfs main backend is libcloudfs, a **file system** that stores all its data in the cloud. libcloudfs store file contents in a [CAS designed](https://github.com/131/casfs) cloud object storage backend [openstack swift](https://developer.openstack.org/api-ref/object-store/) and files metadata (inode table) in an [SQLlite database](https://github.com/131/sqlfs).
+
 
 # Description
-
-[Winfsp-Tray](https://github.com/131/winfsp-tray) is simple tray (no gui) app to manage network drive and mountpoint.
-
-It notifies you when drive are mounted / unmounted, and monitor network configuration change to trigger mount when possible.
-
-# Motivation
-Window network drive are a pain to deal with, once un-registered, you have to re-create a mountpoint. Nor does it notify you when a drive is available.
-This is a nodejs application. Not an electron/nwjs weirdness as there is no GUI involded / required. Tray is handled by a [131/trayicon](https://github.com/131/trayicon), a **node module**.
-
+[cloudfs](https://github.com/131/cloudfs) is simple windows app to manage network drive and mountpoint.
+It supports multiple storage backends and mountpoints, notifies you when drives are mounted / unmounted, and monitor network configuration change to trigger mount when possible.
 
 # Download
-Find all download in [github releases](https://github.com/131/winfsp-tray/releases)
+# Installation
+* Download and install [WinFsp](http://www.secfs.net/winfsp/download/)
+* Download and install [cloudfs (available through github releases)](https://github.com/131/cloudfs/releases)
+* Write configuration file in %LOCALAPPDATA%\Cloudfs\config\config.json (no documentation available for now)
+* Enjoy !
 
 
 
-# Supported drivers : sshfs
-* Install winfsp
-* Install sshfs-win
+# Project structure
+[cloudfs](https://github.com/131/cloudfs) is designed around simplicity.
+* The [libcloudfs](https://github.com/131/libcloudfs) main driver
+* An isolated inode management API (see [sqlfs](https://github.com/131/sqlfs))
+* A [fuse bindings](https://github.com/mafintosh/fuse-bindings) interface
+* A battle tested [casfs](https://github.com/131/casfs) backend, to challenge implementation, confirm design and stress
+* An openstack/[swift](https://github.com/131/swift) driver
 
 
-# Example configuration file %programdata%\drives\drives.json
+# Supported drivers : libcloudfs, sshfs
+* For sshfs, please install install sshfs-win
+
+
+# Example configuration file %programdata%\cloudfs\config.json
 ```
 [
   {
@@ -43,13 +56,10 @@ Find all download in [github releases](https://github.com/131/winfsp-tray/releas
   }
 ]
 ```
-# Roadmap
-* Add NFS driver
 
 
 
 # Advanced (service-mode)
-
 As uses [131's dispatcher](https://github.com/131/dispatcher) under the hood. You can register it to run as NT_AUTHORITY service. (see dist/register_service.cmd)
 
 

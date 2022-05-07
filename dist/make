@@ -19,13 +19,13 @@ here=$(dirname "$0")
 
 SOURCE_DIR=release
 export PACKAGE_VERSION=$(node -p "require('./package.json').version")
-export PACKAGE_NAME=Winfsp-Tray
+export PACKAGE_NAME=Cloudfs
 export OUTPUT_PATH=${PACKAGE_NAME}_v${PACKAGE_VERSION}.msi
 export PACKAGE_GUID=f1752246-7253-11eb-9459-3448ed2469f1
-export SHORTCUT_GUID=$(node -p "require('nyks/node_modules/mout/random/guid')()")
+export SHORTCUT_GUID=$(uuidgen)
 export WSLENV=PACKAGE_VERSION:PACKAGE_GUID:PACKAGE_NAME:SHORTCUT_GUID
 
-
+echo "env is $SHORTCUT_GUID output is $OUTPUT_PATH"
 
 dobuild=
 dosign=
@@ -72,12 +72,22 @@ sign() {
 
 
 if [[ ! -z "$dobuild" ]] ; then
+  set -x
+
   rm -rf $SOURCE_DIR
   mkdir -p $SOURCE_DIR
   rsync -a * --exclude-from=.npmignore .npmrc $(which node.exe) $SOURCE_DIR/
 
+  cp -r package.json index.js libs cloudfs.* $SOURCE_DIR/
   cd $SOURCE_DIR
+
+  # make this high level
+  npm install --legacy-bundling @131/fuse-bindings @131/sqlite3 cnyks
   npm install --production --legacy-bundling
+
+    # this is makes too longs paths for wix to harverst
+  rm -rf node_modules/@131/fuse-bindings/node_modules/prebuild
+
   #heat/light cannot harvest .bin directories
   find -name .bin -type d |xargs rm -rf
   cd ..

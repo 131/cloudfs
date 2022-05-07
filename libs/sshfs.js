@@ -5,7 +5,7 @@ const {spawn} = require('child_process');
 
 const wait = require('nyks/child_process/wait');
 const drain = require('nyks/stream/drain');
-const Drive = require('./drive');
+const PDrive = require('./pdrive');
 
 
 const SSH_FS_WIN_DIR = 'C:\\Program Files\\SSHFS-Win\\bin';
@@ -13,7 +13,8 @@ const SSH_FS_PATH    = path.join(SSH_FS_WIN_DIR, 'sshfs.exe');
 const WINFSP_DIR     = 'C:\\Program Files (x86)\\WinFsp\\bin';
 
 
-class SshFS extends Drive {
+class SshFS extends PDrive {
+
   constructor(config) {
     super(config);
   }
