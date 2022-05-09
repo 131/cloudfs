@@ -18,7 +18,7 @@ class Drive extends EventEmitter {
   constructor(config) {
     super();
     this.config = config;
-    this._statusMsg = consts.STATUS_UNKNOWN;
+    this._statusMsg = consts.STATUS_UNMOUNTED;
   }
 
 

@@ -16,6 +16,7 @@ const ICON_DEFAULT  = fs.readFileSync(path.join(__dirname, 'rsrcs/harddisk_netwo
 const ICON_ALL      = fs.readFileSync(path.join(__dirname, 'rsrcs/harddisk_network.png'));
 
 const {spawn} = require('child_process');
+const meta    = require('./package.json');
 
 
 class DriveCtl extends EventEmitter {
@@ -45,20 +46,30 @@ class DriveCtl extends EventEmitter {
       return;
 
     let menu = [];
+
+    menu.push(this.tray.item(`${meta.name} v${meta.version}`, { disabled : true }));
+    menu.push(this.tray.separator());
+
     let allMounted = true;
 
     for(let drive of this.drives) {
-      allMounted &= (drive._statusMsg == Drive.consts.STATUS_MOUNTED);
+      allMounted &= (drive._statusMsg == Drive.consts.STATUS_MOUNTED || drive._statusMsg == Drive.consts.STATUS_UNMOUNTED);
       menu.push(drive.menu(this.tray));
     }
+
     let icon = allMounted ? ICON_ALL : ICON_DEFAULT;
     this.tray.setIcon(icon);
-    if(!('DISPATCHED_SERVICE_MODE' in process.env))
-      menu.push(this.tray.item("Quit", this.quit.bind(this)));
+
+    menu.push(this.tray.separator());
 
     menu.push(this.tray.item("Open configuration file", function() {
       spawn("notepad.exe", [SETTINGS_PATH]);
     }));
+
+    if(!('DISPATCHED_SERVICE_MODE' in process.env)) {
+      menu.push(this.tray.separator());
+      menu.push(this.tray.item("Quit", this.quit.bind(this)));
+    }
 
     this.tray.setMenu(...menu);
   }
