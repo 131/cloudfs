@@ -63,6 +63,7 @@ class CloudfsDrive extends Drive {
 
     await this.cloudfs.mount(mount);
     this.setStatus(consts.STATUS_MOUNTED);
+    this.emit("notify", "Mounted");
 
     process.on('SIGINT', () => {
       console.log('Received SIGINT. Press Control-D to exit.');
