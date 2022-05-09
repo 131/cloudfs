@@ -75,10 +75,10 @@ if [[ ! -z "$dobuild" ]] ; then
   set -x
 
   rm -rf $SOURCE_DIR
-  mkdir -p $SOURCE_DIR
-  rsync -a * --exclude-from=.npmignore .npmrc $(which node.exe) $SOURCE_DIR/
+  mkdir -p $SOURCE_DIR $SOURCE_DIR/rsrcs
+  rsync -a * --exclude-from=.npmignore .npmrc $SOURCE_DIR/
+  cp -r $(which node.exe) $SOURCE_DIR/rsrcs/
 
-  cp -r package.json index.js libs cloudfs.* $SOURCE_DIR/
   cd $SOURCE_DIR
 
   # make this high level
