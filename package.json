@@ -21,7 +21,7 @@
   "main": "index.js",
   "dependencies": {
     "cnyks": "^2.7.0",
-    "libcloudfs": "^1.2.12",
+    "libcloudfs": "^1.2.13",
     "nyks": "^6.4.1",
     "on-change-network": "^0.0.2",
     "sqlitefs": "^1.1.5",
