@@ -24,6 +24,7 @@
     "libcloudfs": "^1.2.13",
     "nyks": "^6.4.1",
     "on-change-network": "^0.0.2",
+    "single-instance-process": "^1.2.0",
     "sqlitefs": "^1.1.5",
     "swift": "^2.8.0",
     "trayicon": "^1.2.2"

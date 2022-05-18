@@ -4,6 +4,7 @@ const fs   = require('fs');
 const path = require('path');
 const EventEmitter = require('events');
 
+const sip   = require('single-instance-process');
 const Tray = require('trayicon');
 const ocn  = require('on-change-network');
 
@@ -98,6 +99,15 @@ class DriveCtl extends EventEmitter {
 
 
   async run() {
+
+    let is_server = await sip(`${meta.name} instance`, (payload) => {
+      process.emit('openArgs', payload);
+    });
+
+    if(!is_server)
+      process.exit();
+
+
 
     var drives = [];
     try {
